@@ -85,5 +85,5 @@ if download:
 
     df = structuring_data_to_excel(header, content)
 
-    download = FileDownloader(df.to_excel(),filename = search_term,file_ext='xlsx').download()
+    download = FileDownloader(df.to_csv(),filename = search_term,file_ext='xlsx').download()
 
