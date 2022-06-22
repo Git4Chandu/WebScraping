@@ -15,6 +15,7 @@ def find_max_pages(htmlpage):
         return int(str(div).split(" ")[2].split("=")[1][1:-1])
 
 def scrape_data(number_of_pages:int, keyword:str):
+    keyword = keyword.lower()
     header = []
     content = []
     st.markdown("Downloading the Data. Please wait..")
@@ -84,5 +85,5 @@ if download:
 
     df = structuring_data_to_excel(header, content)
 
-    download = FileDownloader(df.to_csv(),file_ext='csv').download()
+    download = FileDownloader(df.to_csv(),filename = search_term,file_ext='csv').download()
 
