@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import base64
 import time
-from io import BytesIO
+import io
 from typing import List
 
 timestr = time.strftime("%Y%m%d-%H%M%S")
@@ -15,6 +15,25 @@ def find_max_pages(htmlpage):
     for div in htmlpage.find_all("div", {"class": "pagination-wrapper"}):
         div = div.find_all("input", {"class": "pagination-jump-field"})
         return int(str(div).split(" ")[2].split("=")[1][1:-1])
+
+def to_excel(df, fname):
+
+    def convert_df(df):
+        buffer = io.BytesIO()
+        with st.spinner('Writing to Excel will take few minutes to complete Please wait...'):
+            with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
+                df.to_excel(writer, sheet_name='Sheet1')
+                writer.save()
+        return buffer
+
+    buffer = convert_df(df)
+    st.success("#### Data Downloaded Successfully ####")
+    st.download_button(
+        label="Download Your Output File as Excel",
+        data=buffer,
+        file_name=f"{fname}_data.xlsx",
+        mime="application/vnd.ms-excel"
+    )
 
 def scrape_data(number_of_pages:int, keyword:str):
     keyword = keyword.lower()
@@ -54,11 +73,8 @@ def structuring_data_to_excel(header_data: List, content_data: List):
     return df
 
 st.header("Unknow Application")
-
 search_term = st.text_input("Enter your search word")
-
 download = st.button("Get Data")
-
 class FileDownloader(object):
 
     def __init__(self, data,filename='myfile',file_ext='txt'):
@@ -70,7 +86,6 @@ class FileDownloader(object):
     def download(self):
         b64 = base64.b64encode(self.data.encode()).decode()
         new_filename = "{}_{}.{}".format(self.filename,timestr,self.file_ext)
-        st.success("#### Data Downloaded Successfully ####")
         href = f'<a href="data:file/{self.file_ext};base64,{b64}" download="{new_filename}">Click Here to download the file.!!</a>'
         st.markdown(href,unsafe_allow_html=True)
         
@@ -90,6 +105,8 @@ if download:
         header, content = scrape_data(number_of_pages, search_term)
 
         df = structuring_data_to_excel(header, content)
+
+        # to_excel(df, fname = search_term)
 
         download = FileDownloader(df.to_csv(index = False),filename = search_term,file_ext='csv').download()
     else:
