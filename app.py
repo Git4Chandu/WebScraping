@@ -23,13 +23,15 @@ def scrape_data(number_of_pages:int, keyword:str):
     st.info(f"Number of pages found {number_of_pages}")
     st.markdown("Downloading the Data. Grab a cup of coffee and wait.")
     print("Downloading Data. Please Wait..")
-
+    
+    t = st.empty()
     my_bar = st.progress(0)
     sessions = np.linspace(0, 1.0, number_of_pages)
     pages = range(1, number_of_pages + 1)
 
     for i, j in zip(pages, sessions):
         my_bar.progress(j)
+        t.warning(f"Downloaded {i} out of {number_of_pages}.")
         url = f"https://klinikradar.de/{keyword}/kliniken/{i}/"
         uclient = ureq(url)
         page = uclient.read()
