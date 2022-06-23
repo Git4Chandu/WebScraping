@@ -20,7 +20,7 @@ def scrape_data(number_of_pages:int, keyword:str):
     keyword = keyword.lower()
     header = []
     content = []
-    st.info(f"Number of pages found {number_of_pages}")
+    # st.info(f"Number of pages found {number_of_pages}")
     st.markdown("Downloading the Data. Grab a cup of coffee and wait.")
     print("Downloading Data. Please Wait..")
     
@@ -31,7 +31,7 @@ def scrape_data(number_of_pages:int, keyword:str):
 
     for i, j in zip(pages, sessions):
         my_bar.progress(j)
-        t.warning(f"Downloaded {i} out of {number_of_pages}.")
+        t.info(f"Downloaded {i} out of {number_of_pages} pages.")
         url = f"https://klinikradar.de/{keyword}/kliniken/{i}/"
         uclient = ureq(url)
         page = uclient.read()
